@@ -37,7 +37,7 @@
       become_method: sudo
       become_user: root
     - name: install weavenet network
-      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=172.16.20.0/24"
+      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=Ipaddress/24"
     - name: pause 60 seconds for weavenet to install
       pause:
         seconds: 60
