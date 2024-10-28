@@ -1,0 +1,8 @@
+---
+  - hosts: retail-nagios-level-5
+    gather_facts: False
+    user: ansible
+    become: yes
+    tasks:
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;localhost;$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd

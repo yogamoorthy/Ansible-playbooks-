@@ -1,0 +1,55 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: add ssh keys to ansible host
+      shell: ssh-keyscan -H ipaddres >> ~/.ssh/known_hosts ; ssh-keyscan -H ipaddress >> ~/.ssh/known_hosts ; ssh-keyscan -H ansible.companyname.net >> ~/.ssh/known_hosts
+- hosts: kubernetes
+  tasks:
+    - name: disable swap and fix iptables
+      shell: 'iptables -F ; swapoff -a'
+      become: true
+      become_method: sudo
+      become_user: root
+- hosts: kubernetesmaster
+  tasks:
+    - name: Run kubeinit on master
+      shell: 'kubeadm init --kubernetes-version v1.8.3 --pod-network-cidr=ipaddress/16 --apiserver-advertise-address=ipaddress | tail -2 > /home/sysadmin/add.txt'
+      become: true
+      become_method: sudo
+      become_user: root
+    - name: pause 60 seconds for kubernetes to install on master
+      pause:
+        seconds: 60
+    - name: create kubernetes config files
+      file:
+        path: /home/sysadmin/.kube
+        state: directory
+        mode: 0755
+    - name: copy config files
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/sysadmin/.kube/config
+        owner: sysadmin
+        group: sysadmin
+        remote_src: yes
+      become: true
+      become_method: sudo
+      become_user: root
+    - name: install flannel network
+      shell: kubectl apply -f /home/sysadmin/calico.yml
+    - name: pause 60 seconds for flannel to install
+      pause:
+        seconds: 60
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: retrieve the add.txt file to be consumed by minions and move to those servers
+      shell: scp sysadmin@ipaddress:/home/sysadmin/add.txt /home/ansible ; chmod +x /home/ansible/add.txt ; scp /home/ansible/add.txt sysadmin@ipaddress:/home/sysadmin ; scp /home/ansible/add.txt sysadmin@ipaddress:/home/sysadmin
+    - name: pause 10 seconds
+      pause:
+        seconds: 10
+- hosts: kubernetesnodes
+  tasks:
+    - name: execute add.txt on kubernetes nodes
+-- INSERT --

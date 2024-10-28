@@ -1,0 +1,16 @@
+---
+ - hosts: retail-nagios-level-test
+   user: ansible
+   gather_facts: False
+   become: yes
+   tasks:
+#   - name: Turn off S1 S Drive
+#     command: sed '651s/register                        1/register                        0/' -i /usr/local/nagios/etc/objects/services.cfg
+   - name: Turn off S1 Z Drive
+     command: sed '695s/register                        1/register                        0/' -i /usr/local/nagios/etc/objects/services.cfg
+#   - name: Turn off SQL Agent
+#     command: sed '760s/register                        1/register                        0/' -i /usr/local/nagios/etc/objects/services.cfg
+#   - name: Turn off SQL Service
+#     command: sed '782s/register                        1/register                        0/' -i /usr/local/nagios/etc/objects/services.cfg
+   - name: Restart Nagios
+     command: systemctl restart nagios

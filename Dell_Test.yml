@@ -1,0 +1,24 @@
+---
+- name: show version
+  hosts: "ansible-lab"
+  gather_facts: false
+  connection: local
+
+  vars:
+    cli:
+        host: ipaddress
+        username: ansible-network
+        password: hiv33$820
+
+  tasks:
+    - name: show version
+      dellos9_command:
+        commands: show version
+        provider: "{{ cli }}"
+
+      register: output
+      delegate_to: localhost
+
+    - name: show output
+      debug:
+        var: output.stdout

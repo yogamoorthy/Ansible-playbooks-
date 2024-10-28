@@ -1,0 +1,5 @@
+---
+  - hosts: windows_test
+    gather_facts: false
+    tasks:
+    - win_ping:

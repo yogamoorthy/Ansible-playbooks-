@@ -1,0 +1,60 @@
+---
+  - hosts: nagios
+    user: ansible
+    become: yes
+    gather_facts: True
+    tasks:
+    - name: CentOS Base GPG Key Copy
+      copy:
+        src: files/RPM-GPG-KEY-CentOS-7
+        dest: /etc/pki/rpm-gpg
+        owner: root
+        group: root
+        mode: 0644
+    - rpm_key:
+        state: present
+        key: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+    - name: CentOS EPEL GPG Key Copy
+      copy:
+        src: files/RPM-GPG-KEY-EPEL-7
+        dest: /etc/pki/rpm-gpg
+        owner: root
+        group: root
+        mode: 0644
+    - rpm_key:
+        state: present
+        key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+#Managing the yum.conf file SSI-220198
+    - template:
+        src: yum.conf.j2
+        dest: /etc/yum.conf
+        owner: root
+        group: root
+        mode: 0644
+
+#Check for elements of Spacewalk registration
+#Then blow it away. We are moving to Artifactory
+    - name: Delete systemid file (if it exists)
+      file:
+        path: /etc/sysconfig/rhn/systemid
+        state: absent
+
+#Plugging in the standard Artifactory repos
+
+    - name: Adding CentOS-Base.repo
+      file:
+        src: CentOS-Base.repo
+        dest: /etc/yum.repos.d/CentOS-Base.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Adding epel.repo
+       file:
+        src: epel.repo
+        dest: /etc/yum.repos.d/epel.repo
+        owner: root
+        group: root
+        mode: 0644

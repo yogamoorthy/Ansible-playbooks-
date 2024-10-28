@@ -1,0 +1,62 @@
+---
+  - hosts: all
+    user: ansible
+    become: yes
+    gather_facts: True
+    tasks:
+# HV1
+    - name: set-hv1-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 ); base_name="HV1.companyname.Net"; echo "$base_storecode$base_name"
+      register: hv1_fqdn
+    - set_fact:
+        shell_hv1_fqdn: "{{ hv1_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_hv1_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd
+# HV2
+    - name: set-hv2-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 ); base_name="HV2.companyname.Net"; echo "$base_storecode$base_name"
+      register: hv2_fqdn
+    - set_fact:
+        shell_hv2_fqdn: "{{ hv2_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_hv2_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd
+# S1
+    - name: set-s1-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 ); base_name="S1.companyname.Net"; echo "$base_storecode$base_name"
+      register: s1_fqdn
+    - set_fact:
+        shell_s1_fqdn: "{{ s1_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_s1_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd
+# MFS1 - Main
+    - name: set-mfs1-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 ); base_name="MFS1.companyname.Net"; echo "$base_storecode$base_name"
+      register: mfs1_fqdn
+    - set_fact:
+        shell_mfs1_fqdn: "{{ mfs1_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_mfs1_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd
+# MFS1 - Gas
+    - name: set-mfs1-gas-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 | cut -c 2-); base_name="MFS1.companyname.Net"; echo "5$base_storecode$base_name"
+      register: mfs1_gas_fqdn
+    - set_fact:
+        shell_mfs1_gas_fqdn: "{{ mfs1_gas_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_mfs1_gas_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd
+# RxHub
+    - name: set-rxhub-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 ); base_name="RXHUB.companyname.Net"; echo "$base_storecode$base_name"
+      register: rxhub_fqdn
+    - set_fact:
+        shell_rxhub_fqdn: "{{ rxhub_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_rxhub_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagios.cmd
+# CCTV
+    - name: set-cctv-hostname
+      shell: base_storecode=$(echo {{ansible_fqdn}} | cut -c -4 ); base_name="CCTVS1.companyname.Net"; echo "$base_storecode$base_name"
+      register: cctv_fqdn
+    - set_fact:
+        shell_cctv_fqdn: "{{ cctv_fqdn.stdout_lines | list | join }}"
+    - name: Recheck Nagios Localhost updates
+      shell: echo "[$(date +%s)] SCHEDULE_FORCED_HOST_SVC_CHECKS;{{shell_cctv_fqdn}};$(date +%s);$(date +%s)" >> /usr/local/nagios/var/rw/nagio        

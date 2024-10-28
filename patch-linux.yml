@@ -1,0 +1,8 @@
+---
+  - hosts: patch_dev
+    gather_facts: true
+    remote_user: ansible
+    become: true
+    become_user: root
+    roles:
+      - linux_update

@@ -1,0 +1,11 @@
+---
+ - hosts: retail-nagios-level-test
+   user: ansible
+   gather_facts: False
+   become: yes
+   tasks:
+   - name: Change 6GiB MFS1 Memory
+     command: sed '859s/check_command                   check_nrpe!check_windowsmemory!-a 0.64 0.32!!!!!!/check_command                   check_nrpe!check_windowsmemory!-a 0.51 0.12!!!!!!/' -i /usr/local/nagios/etc/objects/services.cfg
+   - name: restart service
+     command: systemctl restart nagios
+#      

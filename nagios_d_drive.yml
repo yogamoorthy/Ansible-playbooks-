@@ -1,0 +1,14 @@
+---
+  - hosts: nagios
+    user: ansible
+    become: yes
+    gather_facts: False
+    tasks:
+    - name: Deleting HV1 D Drive Check
+      shell: "/bin/sed '/Hosts HV1: - Drive D/,/}/d' -i /usr/local/nagios/etc/objects/services.cfg"
+    - name: Deleting HV2 D Drive Check
+      shell: "/bin/sed '/Hosts HV2: - Drive D/,/}/d' -i /usr/local/nagios/etc/objects/services.cfg"
+    - name: Restart Nagios Service
+      service:
+        name: nagios
+        state: restarted
